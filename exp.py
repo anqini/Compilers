@@ -6,7 +6,7 @@ class ExpBase:
         self.name = name
     def incDepth(self):
         self.depth += 1
-    def depth(self, depth):
+    def set_depth(self, depth):
         self.depth = depth
     
 class Vdecl:
@@ -52,7 +52,7 @@ class Lit(ExpBase):
         self.value = value
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'value: ' + self.value + '\n'
+        s += '  ' * self.depth + 'value: ' + str(self.value) + '\n'
         return s
 
 class Uop(ExpBase):
@@ -63,7 +63,9 @@ class Uop(ExpBase):
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'op: ' + self.op + '\n'
-        s += '  ' * self.depth + 'exp: ' + self.exp + '\n'
+        s += '  ' * self.depth + 'exp: ' + '\n'
+        self.exp.set_depth(self.depth + 1)
+        s += str(self.exp)
         return s
 
 
@@ -78,6 +80,11 @@ class Binop(ExpBase):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'op: ' + self.op + '\n'
         s += '  ' * self.depth + 'lhs: ' + '\n'
+        self.lhs.set_depth(self.depth + 1)
+        s += str(self.lhs)
+        s += '  ' * self.depth + 'rhs: ' + '\n'
+        self.rhs.set_depth(self.depth + 1)
+        s += str(self.rhs)
         return s
 
 class Assign(ExpBase):
@@ -94,6 +101,13 @@ class Stmts(ExpBase):
     def __init__(self, stmts: list):
         self.name = 'stmts'
         self.stmts = stmts
+
+class IfElse(ExpBase):
+    def __init__(self, cond, stmt, else_stmt):
+        self.name = 'if'
+        self.cond = cond
+        self.stmt = stmt
+        self.else_stmt = else_stmt
 
 class Blk(ExpBase):
     def __init(self, stmts):
