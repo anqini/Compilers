@@ -14,8 +14,8 @@ tokens = [
 'DIVIDE',
 'BTH', # bigger than
 'LTH', # less than
-'BAND', # bitwise and
-'BOR', # bitwise or
+'AND', # and
+'OR', # or
 'LPAREN',
 'RPAREN',
 'LBRACE',
@@ -42,8 +42,8 @@ t_TIMES   = r'\*'
 t_DIVIDE  = r'/'
 t_BTH     = r'\>'
 t_LTH     = r'\<'
-t_BAND    = r'\&\&'
-t_BOR     = r'\|\|'
+t_AND    = r'\&\&'
+t_OR     = r'\|\|'
 t_LPAREN  = r'\('
 t_RPAREN  = r'\)'
 t_LBRACE  = r'\{'
@@ -121,16 +121,17 @@ tokens = list(reserved.values()) + tokens
 # Build the lexer
 lexer = lex.lex()
 
-# Test it out
-data = ''
-with open(sys.argv[1], 'r') as my_file:
-	data += (my_file.read())
-# Give the lexer some input
-lexer.input(data)
+# if __name__ == '__main__':
+#     # Test it out
+#     data = ''
+#     with open(sys.argv[1], 'r') as my_file:
+#         data += (my_file.read())
+#     # Give the lexer some input
+#     lexer.input(data)
 
-# Tokenize
-while True:
- tok = lexer.token()
- if not tok: 
-     break      # No more input
- print(tok)
+#     # Tokenize
+#     while True:
+#         tok = lexer.token()
+#         if not tok: 
+#             break      # No more input
+#         print(tok)

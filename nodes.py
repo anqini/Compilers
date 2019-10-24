@@ -287,16 +287,17 @@ class SpecialFunc(Expstmt):
 
 # function calls
 class Funccall(ExpBase):
-    def __init__(self, globid, params):
+    def __init__(self, globid, params = None):
         self.name = 'funccall'
         self.globid = globid
         self.params = params
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'globid: '+ self.globid + '\n'
-        s += '  ' * self.depth + 'params: ' + '\n'
-        self.params.set_depth(self.depth + 1)
-        s += str(self.params)
+        if self.params:
+            s += '  ' * self.depth + 'params: ' + '\n'
+            self.params.set_depth(self.depth + 1)
+            s += str(self.params)
         return s
 
 # variable declaration statement
