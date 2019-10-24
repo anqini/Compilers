@@ -150,7 +150,7 @@ class Stmts(ExpBase):
 
 class Exps(ExpBase):
     def __init__(self, exps: list):
-        self.name = 'stmts'
+        self.name = 'exps'
         self.exps = exps
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
@@ -305,7 +305,7 @@ class Vardeclstmt(ExpBase):
         s += str(self.exp)
         return s
 
-class printslit(ExpBase):
+class Printslit(ExpBase):
     def __init__(self, string: str):
         self.name = 'printslit'
         self.string = string
