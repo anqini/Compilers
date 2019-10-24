@@ -71,7 +71,8 @@ reserved = {
     'noalias' : 'NOALIAS',
     'def' : 'DEF',
     'print' : 'PRINT',
-    'extern' : 'EXTERN'
+    'extern' : 'EXTERN',
+    'return': 'RET'
  }
 
 def t_lit(t):
@@ -91,7 +92,7 @@ def t_lit(t):
 
 def t_slit(t):
     r'"[^"\n\r]*"'
-    t.value = t.value[1:-1]
+    # t.value = t.value[1:-1]
     return t
 
 def t_ident(t):

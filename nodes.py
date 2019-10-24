@@ -37,7 +37,7 @@ class Vdecls(ExpBase):
         self.vars = vars
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'vars: ' + '\n'
+        s += '  ' * self.depth + 'vars:' + '\n'
         for var in self.vars:
             s += '  ' * (self.depth + 1) + '-\n'
             var.set_depth(self.depth + 2)
@@ -51,7 +51,7 @@ class Tdecls(ExpBase):
         self.types = types
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'types: ' + '\n'
+        s += '  ' * self.depth + 'types:' + '\n'
         for t in self.types:
             s += '  ' * (self.depth + 1) + '- ' + t + '\n'
         return s
@@ -85,7 +85,7 @@ class Uop(ExpBase):
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'op: ' + self.op + '\n'
-        s += '  ' * self.depth + 'exp: ' + '\n'
+        s += '  ' * self.depth + 'exp:' + '\n'
         self.exp.set_depth(self.depth + 1)
         s += str(self.exp)
         return s
@@ -101,10 +101,10 @@ class Binop(ExpBase):
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'op: ' + self.op + '\n'
-        s += '  ' * self.depth + 'lhs: ' + '\n'
+        s += '  ' * self.depth + 'lhs:' + '\n'
         self.lhs.set_depth(self.depth + 1)
         s += str(self.lhs)
-        s += '  ' * self.depth + 'rhs: ' + '\n'
+        s += '  ' * self.depth + 'rhs:' + '\n'
         self.rhs.set_depth(self.depth + 1)
         s += str(self.rhs)
         return s
@@ -118,21 +118,22 @@ class Assign(ExpBase):
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'var: ' + self.var + '\n'
-        s += '  ' * self.depth + 'exp: ' + '\n'
+        s += '  ' * self.depth + 'exp:' + '\n'
         self.exp.set_depth(self.depth + 1)
         s += str(self.exp)
         return s
 
 # expression statement
 class Expstmt(ExpBase):
-    def __init__(self, exp):
+    def __init__(self, exp = None):
         self.name = 'expstmt'
         self.exp = exp
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'exp: ' + '\n'
-        self.exp.set_depth(self.depth + 1)
-        s += str(self.exp)
+        if self.exp:
+            s += '  ' * self.depth + 'exp:' + '\n'
+            self.exp.set_depth(self.depth + 1)
+            s += str(self.exp)
         return s
 
 # statements
@@ -142,7 +143,7 @@ class Stmts(ExpBase):
         self.stmts = stmts
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'stmts: ' + '\n'
+        s += '  ' * self.depth + 'stmts:' + '\n'
         for stmt in self.stmts:
             s += '  ' * (self.depth + 1) + '-\n'
             stmt.set_depth(self.depth + 2)
@@ -156,7 +157,7 @@ class Exps(ExpBase):
         self.exps = exps
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'exps: ' + '\n'
+        s += '  ' * self.depth + 'exps:' + '\n'
         for exp in self.exps:
             s += '  ' * (self.depth + 1) + '-\n'
             exp.set_depth(self.depth + 2)
@@ -172,28 +173,35 @@ class IfElse(ExpBase):
         self.else_stmt = else_stmt
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'cond: ' + '\n'
+        s += '  ' * self.depth + 'cond:' + '\n'
         self.cond.set_depth(self.depth + 1)
         s += str(self.cond)
-        s += '  ' * self.depth + 'stmt: ' + '\n'
+        s += '  ' * self.depth + 'stmt:' + '\n'
         self.stmt.set_depth(self.depth + 1)
         s += str(self.stmt)
         if self.else_stmt: 
-            s += '  ' * self.depth + 'else_stmt: ' + '\n'
+            s += '  ' * self.depth + 'else_stmt:' + '\n'
             self.else_stmt.set_depth(self.depth + 1)
             s += str(self.else_stmt)
         return s
 
+# while class
+class While(IfElse):
+    def __init__(self, cond, stmt):
+        super(While, self).__init__(cond, stmt)
+        self.name = 'while'
+
 # block
 class Blk(ExpBase):
-    def __init__(self, stmts):
+    def __init__(self, stmts = None):
         self.name = 'blk'
         self.contents = stmts
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'contents: ' + '\n'
-        self.contents.set_depth(self.depth + 1)
-        s += str(self.contents)
+        if self.contents:
+            s += '  ' * self.depth + 'contents:' + '\n'
+            self.contents.set_depth(self.depth + 1)
+            s += str(self.contents)
         return s
 
 # function 
@@ -208,11 +216,11 @@ class Func(ExpBase):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'ret_type: ' + self.ret_type + '\n'
         s += '  ' * self.depth + 'globid: ' + self.globid + '\n'
-        s += '  ' * self.depth + 'blk: ' + '\n'
+        s += '  ' * self.depth + 'blk:' + '\n'
         self.blk.set_depth(self.depth + 1)
         s += str(self.blk)
         if self.vdecls:
-            s += '  ' * self.depth + 'vdecls: ' + '\n'
+            s += '  ' * self.depth + 'vdecls:' + '\n'
             self.vdecls.set_depth(self.depth + 1)
             s += str(self.vdecls)
         return s
@@ -224,7 +232,7 @@ class Funcs(ExpBase):
         self.funcs = funcs
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'funcs: ' + '\n'
+        s += '  ' * self.depth + 'funcs:' + '\n'
         for func in self.funcs:
             s += '  ' * (self.depth + 1) + '-\n'
             func.set_depth(self.depth + 2)
@@ -233,7 +241,7 @@ class Funcs(ExpBase):
     
 # external
 class Extern(ExpBase):
-    def __init__(self, ret_type, globid, tdecls):
+    def __init__(self, ret_type, globid, tdecls = None):
         self.name = 'extern'
         self.ret_type = ret_type
         self.globid = globid
@@ -242,9 +250,10 @@ class Extern(ExpBase):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'ret_type: ' + self.ret_type + '\n'
         s += '  ' * self.depth + 'globid: ' + self.globid + '\n'
-        s += '  ' * self.depth + 'tdecls: ' + '\n'
-        self.tdecls.set_depth(self.depth + 1)
-        s += str(self.tdecls)
+        if self.tdecls:
+            s += '  ' * self.depth + 'tdecls:' + '\n'
+            self.tdecls.set_depth(self.depth + 1)
+            s += str(self.tdecls)
         return s
 
 # externals
@@ -254,7 +263,7 @@ class Externs(ExpBase):
         self.externs = externs
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'externs: ' + '\n'
+        s += '  ' * self.depth + 'externs:' + '\n'
         for extern in self.externs:
             s += '  ' * (self.depth + 1) + '-\n'
             extern.set_depth(self.depth + 2)
@@ -268,12 +277,27 @@ class Prog(ExpBase):
         self.externs = externs
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'funcs: ' + '\n'
+        s += '  ' * self.depth + 'funcs:' + '\n'
         self.funcs.set_depth(self.depth + 1)
         s += str(self.funcs)
-        s += '  ' * self.depth + 'externs: ' + '\n'
-        self.externs.set_depth(self.depth + 1)
-        s += str(self.externs)
+        if self.externs:
+            s += '  ' * self.depth + 'externs:' + '\n'
+            self.externs.set_depth(self.depth + 1)
+            s += str(self.externs)
+        return s
+
+
+class Caststmt(ExpBase):
+    def __init__(self, typ, exp):
+        self.name = 'caststmt'
+        self.type = typ
+        self.exp = exp
+    def __str__(self):
+        s = '  ' * self.depth + 'name: ' + self.name + '\n'
+        s += '  ' * self.depth + 'type: '+ self.type + '\n'
+        s += '  ' * self.depth + 'exp:' + '\n'
+        self.exp.set_depth(self.depth + 1)
+        s += str(self.exp)
         return s
 
 # special function including print and ret
@@ -281,7 +305,7 @@ class SpecialFunc(Expstmt):
     '''
     Special functions includes 'print', 'ret'
     '''
-    def __init__(self, name, exp):
+    def __init__(self, name, exp = None):
         self.name = name
         self.exp = exp
 
@@ -295,7 +319,7 @@ class Funccall(ExpBase):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'globid: '+ self.globid + '\n'
         if self.params:
-            s += '  ' * self.depth + 'params: ' + '\n'
+            s += '  ' * self.depth + 'params:' + '\n'
             self.params.set_depth(self.depth + 1)
             s += str(self.params)
         return s
@@ -308,10 +332,10 @@ class Vardeclstmt(ExpBase):
         self.exp = exp
     def __str__(self):
         s = '  ' * self.depth + 'name: ' + self.name + '\n'
-        s += '  ' * self.depth + 'vdecl: ' + '\n'
+        s += '  ' * self.depth + 'vdecl:' + '\n'
         self.vdecl.set_depth(self.depth + 1)
         s += str(self.vdecl)        
-        s += '  ' * self.depth + 'exp: ' + '\n'
+        s += '  ' * self.depth + 'exp:' + '\n'
         self.exp.set_depth(self.depth + 1)
         s += str(self.exp)
         return s
