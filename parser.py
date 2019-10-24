@@ -111,9 +111,13 @@ def p_exps_comb(p):
     p[0] = Exps(p[1].exps + p[3].exps)
 
 
-def p_expression_term(p):
+def p_expression_lit(p):
     'expression : lit'
     p[0] = Lit(p[1])
+
+def p_expression_flit(p):
+    'expression : flit'
+    p[0] = Flit(p[1])
 
 def p_expression_binop(p):
     'expression : binop'
@@ -188,11 +192,13 @@ def p_logicops_exp(p):
     else: raise Exception('logic-ops mismatch...')
     p[0] = Binop(op, p[1], p[3])
 
-def p_uop_exp(p):
-    '''uop : NEG expression
-        | MINUS expression'''
+def p_uop_neg(p):
+    'uop : NEG expression'
     p[0] = Uop('not', p[2])
 
+def p_uop_minus(p):
+    'uop : MINUS expression'
+    p[0] = Uop('minus', p[2])
 
 def p_globid_ident(p):
     'globid : ident'
@@ -235,12 +241,25 @@ def p_vdecl_var(p):
     'vdecl : type varid'
     p[0] = Vdecl(p[1], p[2])
 
+# empty production
+def p_empty(p):
+    'empty :'
+    pass
+
 # Error rule for syntax errors
 def p_error(p):
     print("Syntax error in input!")
 
-# Build the parser
 
+precedence = (
+     ('left', 'OR', 'AND'),
+     ('nonassoc', 'LTH', 'BTH', 'EQU'),  # Nonassociative operators
+     ('left', 'PLUS', 'MINUS'),
+     ('left', 'TIMES', 'DIVIDE'),
+     ('right', 'NEG'),            # Unary minus operator
+ )
+
+# Build the parser
 parser = yacc.yacc()
 
 data = sys.stdin.read()

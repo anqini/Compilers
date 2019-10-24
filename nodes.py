@@ -76,6 +76,11 @@ class Lit(ExpBase):
         s += '  ' * self.depth + 'value: ' + str(self.value) + '\n'
         return s
 
+class Flit(Lit):
+    def __init__(self, value):
+        self.name = 'flit'
+        self.value = value
+
 # unary operator
 class Uop(ExpBase):
     def __init__(self, op, exp):
