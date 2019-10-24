@@ -123,7 +123,7 @@ class Assign(ExpBase):
         s += str(self.exp)
         return s
 
-# expression
+# expression statement
 class Expstmt(ExpBase):
     def __init__(self, exp):
         self.name = 'expstmt'
@@ -135,6 +135,7 @@ class Expstmt(ExpBase):
         s += str(self.exp)
         return s
 
+# statements
 class Stmts(ExpBase):
     def __init__(self, stmts: list):
         self.name = 'stmts'
@@ -148,6 +149,7 @@ class Stmts(ExpBase):
             s += str(stmt)
         return s
 
+# expressions
 class Exps(ExpBase):
     def __init__(self, exps: list):
         self.name = 'exps'
@@ -161,6 +163,7 @@ class Exps(ExpBase):
             s += str(exp)
         return s
 
+# if else statement
 class IfElse(ExpBase):
     def __init__(self, cond, stmt, else_stmt = None):
         self.name = 'if'
@@ -181,6 +184,7 @@ class IfElse(ExpBase):
             s += str(self.else_stmt)
         return s
 
+# block
 class Blk(ExpBase):
     def __init__(self, stmts):
         self.name = 'blk'
@@ -191,7 +195,8 @@ class Blk(ExpBase):
         self.contents.set_depth(self.depth + 1)
         s += str(self.contents)
         return s
-    
+
+# function 
 class Func(ExpBase):
     def __init__(self, ret_type, globid, blk, vdecls = None):
         self.name = 'func'
@@ -212,6 +217,7 @@ class Func(ExpBase):
             s += str(self.vdecls)
         return s
 
+# functions
 class Funcs(ExpBase):
     def __init__(self, funcs):
         self.name = 'funcs'
@@ -225,7 +231,7 @@ class Funcs(ExpBase):
             s += str(func)
         return s
     
-
+# external
 class Extern(ExpBase):
     def __init__(self, ret_type, globid, tdecls):
         self.name = 'extern'
@@ -241,6 +247,7 @@ class Extern(ExpBase):
         s += str(self.tdecls)
         return s
 
+# externals
 class Externs(ExpBase):
     def __init__(self, externs: list):
         self.name = 'externs'
@@ -269,6 +276,7 @@ class Prog(ExpBase):
         s += str(self.externs)
         return s
 
+# special function including print and ret
 class SpecialFunc(Expstmt):
     '''
     Special functions includes 'print', 'ret'
@@ -277,6 +285,7 @@ class SpecialFunc(Expstmt):
         self.name = name
         self.exp = exp
 
+# function calls
 class Funccall(ExpBase):
     def __init__(self, globid, params):
         self.name = 'funccall'
@@ -290,6 +299,7 @@ class Funccall(ExpBase):
         s += str(self.params)
         return s
 
+# variable declaration statement
 class Vardeclstmt(ExpBase):
     def __init__(self, vdecl, exp):
         self.name = 'vardeclstmt'
@@ -305,6 +315,7 @@ class Vardeclstmt(ExpBase):
         s += str(self.exp)
         return s
 
+# print string lit function
 class Printslit(ExpBase):
     def __init__(self, string: str):
         self.name = 'printslit'
