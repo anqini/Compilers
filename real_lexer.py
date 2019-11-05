@@ -121,6 +121,7 @@ t_ignore_COMMENT = r'\#.*'
 # Error handling rule
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
+    sys.exit(1)
     t.lexer.skip(1)
 
 tokens = list(reserved.values()) + tokens
