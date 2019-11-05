@@ -6,12 +6,23 @@ from nodes import *
 from real_lexer import tokens
 import sys
 
+func_arr = {}
+func_ret = {}
+
 def p_prog_with_externs(p):
     'prog : externs funcs'
+    if 'run' not in func_ret:
+        raise Exception('error: there is no run function!')
+    if func_ret['run'] != 'int':
+        raise Exception('error: run function should return int')
     p[0] = Prog(p[2], p[1])
 
 def p_prog_without_externs(p):
     'prog : funcs'
+    if 'run' not in func_ret:
+        raise Exception('error: there is no run function!')
+    if func_ret['run'] != 'int':
+        raise Exception('error: run function should return int')
     p[0] = Prog(p[1])
 
 def p_externs_single(p):
@@ -24,10 +35,18 @@ def p_externs_more(p):
 
 def p_extern_with_param(p):
     'extern : EXTERN type globid LPAREN tdecls RPAREN SEMICO'
+    func_arr[p[3]] = p[5].types
+    func_ret[p[3]] = p[2]
+    if p[2].startswith('ref'):
+        raise Exception('error: Function should not return ref type!')
     p[0] = Extern(p[2], p[3], p[5])
 
 def p_extern_without_param(p):
     'extern : EXTERN type globid LPAREN RPAREN SEMICO'
+    func_arr[p[3]] = []
+    func_ret[p[3]] = p[2]
+    if p[2].startswith('ref'):
+        raise Exception('error: Function should not return ref type!')
     p[0] = Extern(p[2], p[3])
 
 def p_funcs_single(p):
@@ -40,10 +59,18 @@ def p_funcs_more(p):
 
 def p_func_blk(p):
     'function : DEF type globid LPAREN vdecls RPAREN blk'
+    func_arr[p[3]] = [x.type for x in p[5].vars]
+    func_ret[p[3]] = p[2]
+    if p[2].startswith('ref'):
+        raise Exception('error: Function should not return ref type!')
     p[0] = Func(p[2], p[3], p[7], p[5])
 
 def p_func_blk_noparam(p):
     'function : DEF type globid LPAREN RPAREN blk'
+    func_arr[p[3]] = []
+    func_ret[p[3]] = p[2]
+    if p[2].startswith('ref'):
+        raise Exception('error: Function should not return ref type!')
     p[0] = Func(p[2], p[3], p[6])
 
 def p_blk_stmt(p):
@@ -72,6 +99,8 @@ def p_stmt_expre(p):
 
 def p_stmt_vdecl(p):
     'stmt : vdecl ASSIGN expression SEMICO'
+    if p[1].type.startswith('ref') and p[3].name != 'varval':
+        raise Exception('error: ref type variable defined incorrectly!')
     p[0] = Vardeclstmt(p[1], p[3])
 
 def p_stmt_printslit(p):
@@ -137,10 +166,17 @@ def p_expression_var(p):
 
 def p_expression_func_without_param(p):
     'expression : globid LPAREN RPAREN'
+    if p[1] not in func_arr:
+        raise Exception('error: Function not defined!')
     p[0] = Funccall(p[1])
 
 def p_expression_func(p):
     'expression : globid LPAREN exps RPAREN'
+    if p[1] not in func_arr:
+        raise Exception('error: Function not defined!')
+    for idx, typ in enumerate(func_arr[p[1]]):
+        if typ.startswith('ref') and p[3].exps[idx].name != 'varval':
+            raise Exception('error: ref type variable defined incorrectly!')
     p[0] = Funccall(p[1], p[3])
 
 def p_expression_typecase(p):
@@ -215,6 +251,8 @@ def p_type_basic(p):
 
 def p_type_ref(p):
     'type : REF type'
+    if p[2].startswith('ref') or p[2] == 'void':
+        raise Exception('error: Invalid ref type!')
     p[0] = p[1] + ' ' + p[2]
 
 def p_type_ref_noalias(p):
@@ -239,6 +277,8 @@ def p_vdecls_more(p):
 
 def p_vdecl_var(p):
     'vdecl : type varid'
+    if p[1] == 'void':
+        raise Exception('error: Invalid Vdecl!')
     p[0] = Vdecl(p[1], p[2])
 
 # empty production
@@ -248,24 +288,28 @@ def p_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
-    print("Syntax error in input!")
+    raise Exception("error: Syntax error in input!")
 
 
 precedence = (
-     ('left', 'OR', 'AND'),
-     ('nonassoc', 'LTH', 'BTH', 'EQU'),  # Nonassociative operators
+     ('right', 'ASSIGN'),
+     ('left', 'OR'),
+     ('left', 'AND'),
+     ('left', 'EQU'),
+     ('left', 'LTH', 'BTH'),  # Nonassociative operators
      ('left', 'PLUS', 'MINUS'),
      ('left', 'TIMES', 'DIVIDE'),
      ('right', 'NEG'),            # Unary minus operator
- )
+)
 
-# Build the parser
-parser = yacc.yacc()
+def main(data):
+    # Build the parser
+    parser = yacc.yacc()
+    result = parser.parse(data)
+    print(result)
 
-data = sys.stdin.read()
-
-result = parser.parse(data)
-
-print(result)
-
-
+if __name__ == '__main__':
+    try:
+        main(sys.stdin.read())
+    except Exception as e:
+        print(e)
