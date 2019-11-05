@@ -281,7 +281,8 @@ class Prog(ExpBase):
         self.funcs = funcs
         self.externs = externs
     def __str__(self):
-        s = '  ' * self.depth + 'name: ' + self.name + '\n'
+        s = '---\n'
+        s += '  ' * self.depth + 'name: ' + self.name + '\n'
         s += '  ' * self.depth + 'funcs:' + '\n'
         self.funcs.set_depth(self.depth + 1)
         s += str(self.funcs)
@@ -289,6 +290,7 @@ class Prog(ExpBase):
             s += '  ' * self.depth + 'externs:' + '\n'
             self.externs.set_depth(self.depth + 1)
             s += str(self.externs)
+        s += '...\n'
         return s
 
 
