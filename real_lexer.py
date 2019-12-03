@@ -85,10 +85,8 @@ def t_flit(t):
 def t_lit(t):
     r'true|false|[0-9]+'
     if t.value == 'true':
-        t.value = True
         return t
     elif t.value == 'false':
-        t.value = false
         return t
     else:
         t.value = int(t.value)

@@ -20,7 +20,6 @@ def float test1(noalias ref float $a, noalias ref float $b, float $c) {
     } else {
       $a = 8.5;
     }
-
     $b = 7.2;
   }
 

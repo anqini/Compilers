@@ -2,11 +2,14 @@ extern int getarg(int);
 extern float getargf(int);
 
 def int fib (int $n) {
-    if ($n < 2)
-        if ($n == 0)
+    if ($n < 2) {
+        if ($n == 0) {
             return 0;
-        else
+        }
+        else {
             return 1;
+        }
+    }
     
     int $a = fib ($n - 1);
     int $b = fib ($n - 2);
@@ -19,7 +22,7 @@ def void inc (ref int $n) {
 
 def void things (ref int $n) {
   while (!($n > 100)) {
-    $n = $n * $n - 2;
+    $n = $n * $n - 2; 
   }
 }
 
